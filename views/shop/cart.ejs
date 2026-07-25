@@ -1,0 +1,96 @@
+<%- include('../layouts/header', { pageTitle: 'Shopping Cart' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container py-5">
+  <h2 class="fw-bold text-white mb-4"><i class="bi bi-bag-fill me-2 text-cyan"></i> Your Shopping Cart</h2>
+
+  <div class="row g-4">
+    <!-- Cart Items List -->
+    <div class="col-lg-8" id="cartItemsList">
+      <!-- Populated via cart.js -->
+    </div>
+
+    <!-- Summary Sidebar -->
+    <div class="col-lg-4">
+      <div class="card card-gaming p-4 sticky-top" style="top: 90px;">
+        <h5 class="fw-bold text-white mb-3">Order Summary</h5>
+
+        <!-- Customer Email Input -->
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-bold">Delivery Email Address</label>
+          <input type="email" id="customerEmailInput" class="form-control form-control-dark" 
+                 placeholder="name@example.com" value="<%= user ? user.email : '' %>" required>
+          <div class="form-text text-secondary small">Purchased digital keys will be attached to this email.</div>
+        </div>
+
+        <!-- Coupon Input -->
+        <div class="mb-4">
+          <label class="form-label text-muted small fw-bold">Promo / Coupon Code</label>
+          <div class="input-group input-group-sm">
+            <input type="text" id="couponInput" class="form-control form-control-dark text-uppercase" placeholder="Try GAMER10">
+            <button class="btn btn-outline-gaming" type="button" onclick="applyCouponCode()">Apply</button>
+          </div>
+          <div id="couponMsg"></div>
+        </div>
+
+        <div class="border-top border-secondary pt-3 mb-3 d-grid gap-2">
+          <div class="d-flex justify-content-between text-secondary">
+            <span>Subtotal</span>
+            <span id="cartSubtotal" class="fw-bold text-white">$0.00</span>
+          </div>
+          <div class="d-flex justify-content-between text-success">
+            <span>Discount</span>
+            <span id="cartDiscount" class="fw-bold">-$0.00</span>
+          </div>
+          <hr class="border-secondary my-1">
+          <div class="d-flex justify-content-between fs-5 fw-bold text-cyan">
+            <span>Total</span>
+            <span id="cartTotal">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Primary Payment Buttons -->
+        <div class="d-grid gap-2 mb-3">
+          <button id="stripePayBtn" class="btn btn-gaming btn-lg" onclick="processCheckout(false)">
+            <i class="bi bi-stripe me-2"></i> Pay with Stripe
+          </button>
+          <button id="sandboxPayBtn" class="btn btn-outline-gaming btn-sm" onclick="processCheckout(true)">
+            <i class="bi bi-cpu me-2 text-warning"></i> Sandbox Payment Simulator (Instant Test)
+          </button>
+        </div>
+
+        <div class="text-center text-secondary small">
+          <i class="bi bi-shield-check me-1 text-success"></i> 100% Encrypted Checkout Guarantee
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Sandbox Simulator Fallback Notice -->
+<div class="modal fade" id="sandboxNoticeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-card border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title fw-bold text-white"><i class="bi bi-stripe text-info me-2"></i> Stripe API Key Mode</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-content-body p-4 text-secondary">
+        <p class="text-white">
+          Stripe is currently using sample test keys (<code>sk_test_sample...</code>).
+        </p>
+        <p class="small">
+          You can test the <strong>Instant Payment Simulator</strong> right now without setting up a live Stripe account!
+          Once you are ready for production, enter your live/test Stripe API keys in the <strong>Admin Panel &rarr; Settings</strong>.
+        </p>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-gaming w-100" onclick="bootstrap.Modal.getInstance(document.getElementById('sandboxNoticeModal')).hide(); processCheckout(true);">
+          <i class="bi bi-play-circle-fill me-2"></i> Run Instant Payment Simulator
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

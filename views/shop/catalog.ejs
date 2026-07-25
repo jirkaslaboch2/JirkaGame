@@ -1,0 +1,116 @@
+<%- include('../layouts/header', { pageTitle: 'Storefront Catalog' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container py-5">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom border-secondary gap-3">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-grid-fill me-2 text-cyan"></i> Gaming Storefront Catalog</h2>
+      <p class="text-secondary small mb-0">Discover verified in-game codes, skins, gold, and gift cards with instant key delivery.</p>
+    </div>
+    <div class="text-secondary small">
+      Showing <strong><%= products.length %></strong> items available
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Sidebar Filters -->
+    <div class="col-lg-3">
+      <div class="card card-gaming p-3 sticky-top" style="top: 90px; z-index: 10;">
+        <h5 class="fw-bold text-white mb-3"><i class="bi bi-funnel-fill me-2 text-cyan"></i> Filter Products</h5>
+
+        <form action="/catalog" method="GET">
+          <!-- Search -->
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Search Keywords</label>
+            <input type="text" name="search" class="form-control form-control-dark form-control-sm" placeholder="Skin, Robux, Gold..." value="<%= searchQuery %>">
+          </div>
+
+          <!-- Category -->
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Game Category</label>
+            <select name="category" class="form-select form-select-dark form-select-sm">
+              <option value="">All Game Categories</option>
+              <% categories.forEach(c => { %>
+                <option value="<%= c.slug %>" <%= selectedCategory === c.slug ? 'selected' : '' %>><%= c.name %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <!-- Rarity -->
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Item Rarity</label>
+            <select name="rarity" class="form-select form-select-dark form-select-sm">
+              <option value="">All Rarities</option>
+              <option value="Legendary" <%= selectedRarity === 'Legendary' ? 'selected' : '' %>>Legendary</option>
+              <option value="Epic" <%= selectedRarity === 'Epic' ? 'selected' : '' %>>Epic</option>
+              <option value="Rare" <%= selectedRarity === 'Rare' ? 'selected' : '' %>>Rare</option>
+              <option value="Common" <%= selectedRarity === 'Common' ? 'selected' : '' %>>Common</option>
+            </select>
+          </div>
+
+          <!-- Sorting -->
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-bold">Sort By</label>
+            <select name="sort" class="form-select form-select-dark form-select-sm">
+              <option value="newest" <%= selectedSort === 'newest' ? 'selected' : '' %>>Newest Additions</option>
+              <option value="price-low" <%= selectedSort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+              <option value="price-high" <%= selectedSort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+              <option value="name" <%= selectedSort === 'name' ? 'selected' : '' %>>Product Name</option>
+            </select>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-gaming btn-sm">Apply Filters</button>
+            <a href="/catalog" class="btn btn-outline-gaming btn-sm">Reset All</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="col-lg-9">
+      <% if (products.length === 0) { %>
+        <div class="card card-gaming p-5 text-center my-4">
+          <i class="bi bi-search text-muted" style="font-size: 3.5rem;"></i>
+          <h4 class="mt-3 text-white">No items found matching your filter</h4>
+          <p class="text-secondary">Try searching for broad terms or select another category.</p>
+          <div>
+            <a href="/catalog" class="btn btn-gaming">Reset Filters</a>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="row g-4">
+          <% products.forEach(prod => { %>
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="card card-gaming h-100">
+                <div class="product-img-wrapper">
+                  <img src="<%= prod.image_url %>" alt="<%= prod.name %>">
+                  <span class="rarity-badge rarity-<%= prod.rarity.toLowerCase() %>"><%= prod.rarity %></span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <div class="text-cyan small fw-bold text-uppercase mb-1"><%= prod.category_name %></div>
+                  <h6 class="card-title fw-bold text-white text-truncate mb-2" title="<%= prod.name %>">
+                    <a href="/product/<%= prod.slug %>" class="text-white text-decoration-none"><%= prod.name %></a>
+                  </h6>
+                  <p class="card-text small text-secondary flex-grow-1 text-truncate-2">
+                    <%= prod.description %>
+                  </p>
+                  <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top border-secondary">
+                    <div>
+                      <span class="fs-5 fw-bold text-white">$<%= prod.price.toFixed(2) %></span>
+                    </div>
+                    <button class="btn btn-sm btn-gaming" onclick='addToCart(<%- JSON.stringify({ id: prod.id, name: prod.name, price: prod.price, image_url: prod.image_url, rarity: prod.rarity }) %>)'>
+                      <i class="bi bi-cart-plus me-1"></i> Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

@@ -1,0 +1,202 @@
+<%- include('../layouts/header', { pageTitle: 'Admin Dashboard' }) %>
+<%- include('../layouts/navbar') %>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid px-lg-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-speedometer2 me-2 text-cyan"></i> Admin Control Panel</h2>
+      <p class="text-secondary small mb-0">Overview of store revenue, inventory pools, and order management</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/admin/products/new" class="btn btn-gaming"><i class="bi bi-plus-lg me-1"></i> Add Game Item</a>
+      <a href="/admin/keys" class="btn btn-neon-purple"><i class="bi bi-key-fill me-1"></i> Stock Key Pool</a>
+    </div>
+  </div>
+
+  <!-- Admin Subnav -->
+  <div class="nav nav-pills gap-2 mb-4 bg-card p-2 rounded-3 border border-secondary">
+    <a href="/admin" class="nav-link active"><i class="bi bi-bar-chart-fill me-1"></i> Overview</a>
+    <a href="/admin/products" class="nav-link text-white"><i class="bi bi-box-seam me-1"></i> Products</a>
+    <a href="/admin/categories" class="nav-link text-white"><i class="bi bi-tags me-1"></i> Categories</a>
+    <a href="/admin/keys" class="nav-link text-white"><i class="bi bi-key me-1"></i> Key Pools</a>
+    <a href="/admin/orders" class="nav-link text-white"><i class="bi bi-receipt me-1"></i> Orders</a>
+    <a href="/admin/coupons" class="nav-link text-white"><i class="bi bi-ticket-perforated me-1"></i> Coupons</a>
+    <a href="/admin/settings" class="nav-link text-white"><i class="bi bi-gear me-1"></i> Store Settings</a>
+  </div>
+
+  <!-- Stat Cards Grid -->
+  <div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-widget d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-secondary small fw-bold text-uppercase">Total Revenue</span>
+          <h3 class="fw-bold text-cyan mt-1 mb-0">$<%= totalRevenue.toFixed(2) %></h3>
+        </div>
+        <div class="stat-icon bg-info bg-opacity-25 text-info">
+          <i class="bi bi-currency-dollar"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-widget d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-secondary small fw-bold text-uppercase">Completed Orders</span>
+          <h3 class="fw-bold text-white mt-1 mb-0"><%= totalOrders %></h3>
+        </div>
+        <div class="stat-icon bg-success bg-opacity-25 text-success">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-widget d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-secondary small fw-bold text-uppercase">Active Products</span>
+          <h3 class="fw-bold text-white mt-1 mb-0"><%= totalProducts %></h3>
+        </div>
+        <div class="stat-icon bg-warning bg-opacity-25 text-warning">
+          <i class="bi bi-controller"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-widget d-flex align-items-center justify-content-between">
+        <div>
+          <span class="text-secondary small fw-bold text-uppercase">Available Key Codes</span>
+          <h3 class="fw-bold text-white mt-1 mb-0"><%= activeKeys %></h3>
+        </div>
+        <div class="stat-icon bg-purple bg-opacity-25 text-purple" style="color: #9d4edd;">
+          <i class="bi bi-key-fill"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Chart: Category Breakdown -->
+    <div class="col-lg-5">
+      <div class="card card-gaming p-4 h-100">
+        <h5 class="fw-bold text-white mb-3"><i class="bi bi-pie-chart-fill me-2 text-cyan"></i> Product Distribution</h5>
+        <div style="max-height: 280px;" class="d-flex justify-content-center">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Low Stock Alerts -->
+    <div class="col-lg-7">
+      <div class="card card-gaming p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> Inventory Key Alerts</h5>
+          <a href="/admin/keys" class="btn btn-sm btn-outline-gaming">Restock Keys</a>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table table-dark table-dark-custom mb-0">
+            <thead>
+              <tr class="text-muted small">
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Keys Remaining</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% lowStockProducts.forEach(p => { %>
+                <tr>
+                  <td class="fw-bold text-white"><%= p.name %></td>
+                  <td>$<%= p.price.toFixed(2) %></td>
+                  <td><strong class="<%= p.key_count < 5 ? 'text-danger' : 'text-warning' %>"><%= p.key_count %></strong></td>
+                  <td>
+                    <% if (p.key_count === 0) { %>
+                      <span class="badge bg-danger">OUT OF STOCK</span>
+                    <% } else if (p.key_count < 5) { %>
+                      <span class="badge bg-warning text-dark">CRITICAL LOW</span>
+                    <% } else { %>
+                      <span class="badge bg-info text-dark">NORMAL</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="col-12">
+      <div class="card card-gaming p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0"><i class="bi bi-receipt me-2 text-cyan"></i> Recent Orders</h5>
+          <a href="/admin/orders" class="btn btn-sm btn-outline-gaming">View All Orders &rarr;</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-dark-custom mb-0 align-middle">
+            <thead>
+              <tr class="text-muted small">
+                <th>Order Ref</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% recentOrders.forEach(o => { %>
+                <tr>
+                  <td><strong class="text-cyan"><%= o.order_number %></strong></td>
+                  <td><%= o.customer_email %></td>
+                  <td class="fw-bold">$<%= o.total_amount.toFixed(2) %></td>
+                  <td><%= o.payment_method %></td>
+                  <td class="small text-secondary"><%= new Date(o.created_at).toLocaleString() %></td>
+                  <td>
+                    <span class="badge bg-<%= o.status === 'completed' ? 'success' : 'warning' %>">
+                      <%= o.status.toUpperCase() %>
+                    </span>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const ctx = document.getElementById('categoryChart');
+  if (ctx) {
+    const stats = <%- JSON.stringify(categoryStats) %>;
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: stats.map(s => s.name),
+        datasets: [{
+          data: stats.map(s => s.product_count),
+          backgroundColor: ['#00f2fe', '#7928ca', '#ff007f', '#00e676', '#ffb703', '#3a86ff'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#94a3b8' }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+
+<%- include('../layouts/footer') %>

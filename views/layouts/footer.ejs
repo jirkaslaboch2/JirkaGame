@@ -1,0 +1,66 @@
+<footer class="mt-auto py-5 bg-card border-top border-secondary text-muted">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <a class="navbar-brand d-flex align-items-center gap-2 mb-3" href="/">
+          <i class="bi bi-controller text-cyan" style="font-size: 1.8rem;"></i>
+          <span class="fs-4 font-weight-bold text-white">LOOT<span class="text-cyan">VAULT</span></span>
+        </a>
+        <p class="small text-secondary mb-3">
+          The premier automated digital store for online gaming items, in-game currency vouchers, rare weapon skins, and instant license key codes. Instant delivery 24/7.
+        </p>
+        <div class="d-flex gap-3 text-secondary fs-5">
+          <i class="bi bi-discord me-2"></i>
+          <i class="bi bi-twitter-x me-2"></i>
+          <i class="bi bi-youtube me-2"></i>
+          <i class="bi bi-twitch"></i>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="text-white fw-bold mb-3">Quick Navigation</h6>
+        <ul class="list-unstyled small d-grid gap-2">
+          <li><a href="/" class="text-secondary text-decoration-none">Home</a></li>
+          <li><a href="/catalog" class="text-secondary text-decoration-none">Storefront</a></li>
+          <li><a href="/cart" class="text-secondary text-decoration-none">Shopping Cart</a></li>
+          <li><a href="/user/inventory" class="text-secondary text-decoration-none">Keys Vault</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="text-white fw-bold mb-3">Top Game Categories</h6>
+        <ul class="list-unstyled small d-grid gap-2">
+          <li><a href="/catalog?category=cs2" class="text-secondary text-decoration-none">Counter-Strike 2</a></li>
+          <li><a href="/catalog?category=wow" class="text-secondary text-decoration-none">World of Warcraft</a></li>
+          <li><a href="/catalog?category=roblox" class="text-secondary text-decoration-none">Roblox Robux</a></li>
+          <li><a href="/catalog?category=gta5" class="text-secondary text-decoration-none">GTA V Online Cash</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4">
+        <h6 class="text-white fw-bold mb-3">Secure Payment Integration</h6>
+        <p class="small text-secondary mb-3">
+          Powered by <strong>Stripe Checkout</strong> with end-to-end TLS encryption, Apple Pay, Google Pay, and Instant Automated Delivery.
+        </p>
+        <div class="d-flex align-items-center gap-3 fs-3 text-white-50">
+          <i class="bi bi-credit-card-2-front"></i>
+          <i class="bi bi-stripe text-info"></i>
+          <i class="bi bi-shield-lock-fill text-success"></i>
+          <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 small fs-6">256-bit SSL</span>
+        </div>
+      </div>
+    </div>
+    <hr class="my-4 border-secondary opacity-50">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center small text-secondary">
+      <div>&copy; <%= new Date().getFullYear() %> LootVault Gaming Store. All rights reserved.</div>
+      <div class="mt-2 mt-sm-0">
+        <a href="/admin" class="text-secondary text-decoration-none me-3"><i class="bi bi-lock me-1"></i> Admin Portal</a>
+        <a href="/deployment_guide.md" target="_blank" class="text-cyan text-decoration-none"><i class="bi bi-book me-1"></i> Deployment Guide</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Cart Client Script -->
+<script src="/js/cart.js"></script>
+</body>
+</html>

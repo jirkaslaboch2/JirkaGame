@@ -1,0 +1,80 @@
+<%- include('../layouts/header', { pageTitle: 'Admin - Settings' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-gear me-2 text-cyan"></i> Store Settings & Stripe Integration</h2>
+      <p class="text-secondary small mb-0">Configure payment gateways, site branding, announcement banner, and sandbox toggles</p>
+    </div>
+  </div>
+
+  <% if (success) { %>
+    <div class="alert alert-success border-success small mb-4">
+      <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
+    </div>
+  <% } %>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card card-gaming p-4 p-md-5">
+        <form action="/admin/settings" method="POST">
+          <!-- General Branding -->
+          <h5 class="fw-bold text-white mb-3 pb-2 border-bottom border-secondary">
+            <i class="bi bi-shop text-cyan me-2"></i> General Store Configuration
+          </h5>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-bold">Store Brand Name</label>
+              <input type="text" name="site_name" class="form-control form-control-dark" value="<%= settings.site_name || 'LootVault Gaming Store' %>" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-bold">Currency Symbol</label>
+              <input type="text" name="currency_symbol" class="form-control form-control-dark" value="<%= settings.currency_symbol || '$' %>" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted small fw-bold">Homepage Announcement Banner</label>
+              <input type="text" name="banner_message" class="form-control form-control-dark" value="<%= settings.banner_message || '' %>" placeholder="e.g., 🔥 Summer Sale! Use GAMER10 for 10% off!">
+            </div>
+          </div>
+
+          <!-- Stripe Payment Gateway Settings -->
+          <h5 class="fw-bold text-white mb-3 pb-2 border-bottom border-secondary pt-2">
+            <i class="bi bi-stripe text-info me-2"></i> Stripe Payments API Setup
+          </h5>
+
+          <div class="alert alert-dark border-secondary small mb-4">
+            <i class="bi bi-info-circle-fill me-2 text-info"></i>
+            Enter your <strong>Stripe API Keys</strong> from your <a href="https://dashboard.stripe.com/apikeys" target="_blank" class="text-cyan">Stripe Dashboard</a>.
+            Leave as <code>pk_test_sample...</code> to keep the built-in instant Sandbox Simulator active for local testing!
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Stripe Publishable Key (pk_test_... or pk_live_...)</label>
+            <input type="text" name="stripe_publishable_key" class="form-control form-control-dark font-monospace" value="<%= settings.stripe_publishable_key || '' %>" placeholder="pk_test_...">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Stripe Secret Key (sk_test_... or sk_live_...)</label>
+            <input type="password" name="stripe_secret_key" class="form-control form-control-dark font-monospace" value="<%= settings.stripe_secret_key || '' %>" placeholder="sk_test_...">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-bold">Stripe Webhook Signing Secret (whsec_...)</label>
+            <input type="password" name="stripe_webhook_secret" class="form-control form-control-dark font-monospace" value="<%= settings.stripe_webhook_secret || '' %>" placeholder="whsec_...">
+            <div class="form-text text-secondary small">Endpoint URL for Webhooks: <code>https://yourdomain.com/checkout/webhook</code></div>
+          </div>
+
+          <div class="d-grid gap-2 pt-2">
+            <button type="submit" class="btn btn-gaming btn-lg">
+              <i class="bi bi-save me-1"></i> Save Store Settings
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

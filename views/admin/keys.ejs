@@ -1,0 +1,111 @@
+<%- include('../layouts/header', { pageTitle: 'Admin - Key Pools' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container-fluid px-lg-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-key-fill me-2 text-warning"></i> Digital Key Pool Manager</h2>
+      <p class="text-secondary small mb-0">Pre-load, inspect, and restock digital license codes for automated customer delivery</p>
+    </div>
+  </div>
+
+  <% if (success) { %>
+    <div class="alert alert-success border-success small mb-4">
+      <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
+    </div>
+  <% } %>
+
+  <div class="row g-4">
+    <!-- Batch Add Keys Panel -->
+    <div class="col-lg-4">
+      <div class="card card-gaming p-4 mb-4">
+        <h5 class="fw-bold text-white mb-3"><i class="bi bi-plus-circle me-1 text-cyan"></i> Batch Add Digital Keys</h5>
+
+        <form action="/admin/keys/add" method="POST">
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Select Target Product</label>
+            <select name="product_id" class="form-select form-select-dark" required onchange="window.location.href='/admin/keys?product_id=' + this.value">
+              <% products.forEach(p => { %>
+                <option value="<%= p.id %>" <%= selectedProductId == p.id ? 'selected' : '' %>><%= p.name %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Paste Key Codes (One Code Per Line)</label>
+            <textarea name="key_codes" class="form-control form-control-dark font-monospace" rows="8" placeholder="WOW-GOLD-100K-KEY-001&#10;WOW-GOLD-100K-KEY-002&#10;WOW-GOLD-100K-KEY-003" required></textarea>
+            <div class="form-text text-secondary small">Each non-empty line will be inserted as an active redeemable key.</div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-gaming"><i class="bi bi-upload me-1"></i> Upload Key Codes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Key Inventory Table -->
+    <div class="col-lg-8">
+      <div class="card card-gaming p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0">Key Inventory List</h5>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-gaming dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Filter Product
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark bg-card border-secondary">
+              <% products.forEach(p => { %>
+                <li><a class="dropdown-item" href="/admin/keys?product_id=<%= p.id %>"><%= p.name %></a></li>
+              <% }); %>
+            </ul>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-dark-custom align-middle mb-0">
+            <thead>
+              <tr class="text-muted small">
+                <th>Product</th>
+                <th>Digital Key Code</th>
+                <th>Status</th>
+                <th>Assigned Order</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (keys.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">No key codes found for this product. Use the form on the left to add keys!</td>
+                </tr>
+              <% } else { %>
+                <% keys.forEach(k => { %>
+                  <tr>
+                    <td class="fw-bold text-white"><%= k.product_name %></td>
+                    <td><code class="text-cyan font-monospace fs-6"><%= k.key_code %></code></td>
+                    <td>
+                      <% if (k.is_used) { %>
+                        <span class="badge bg-secondary">USED</span>
+                      <% } else { %>
+                        <span class="badge bg-success">AVAILABLE</span>
+                      <% } %>
+                    </td>
+                    <td class="small text-secondary">
+                      <%= k.order_id ? 'Order #' + k.order_id : '-' %>
+                    </td>
+                    <td class="text-end">
+                      <form action="/admin/keys/delete/<%= k.id %>" method="POST" class="d-inline" onsubmit="return confirm('Delete this key?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

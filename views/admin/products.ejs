@@ -1,0 +1,81 @@
+<%- include('../layouts/header', { pageTitle: 'Admin - Products' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container-fluid px-lg-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-box-seam me-2 text-cyan"></i> Product Catalog Management</h2>
+      <p class="text-secondary small mb-0">Add, edit, or remove game items, price tags, and inventory stock pools</p>
+    </div>
+    <a href="/admin/products/new" class="btn btn-gaming"><i class="bi bi-plus-lg me-1"></i> Add New Product</a>
+  </div>
+
+  <% if (success) { %>
+    <div class="alert alert-success border-success small mb-4">
+      <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
+    </div>
+  <% } %>
+
+  <div class="card card-gaming p-4">
+    <div class="table-responsive">
+      <table class="table table-dark table-dark-custom align-middle mb-0">
+        <thead>
+          <tr class="text-muted small">
+            <th>Item</th>
+            <th>Category</th>
+            <th>Rarity</th>
+            <th>Price</th>
+            <th>Available Keys</th>
+            <th>Featured</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(p => { %>
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="<%= p.image_url %>" alt="<%= p.name %>" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px;">
+                  <div>
+                    <h6 class="fw-bold text-white mb-0"><%= p.name %></h6>
+                    <span class="small text-secondary font-monospace"><%= p.slug %></span>
+                  </div>
+                </div>
+              </td>
+              <td><%= p.category_name %></td>
+              <td>
+                <span class="rarity-badge rarity-<%= p.rarity.toLowerCase() %>" style="position: static;"><%= p.rarity %></span>
+              </td>
+              <td class="fw-bold text-cyan">$<%= p.price.toFixed(2) %></td>
+              <td>
+                <span class="badge bg-<%= p.active_keys > 0 ? 'success' : 'danger' %> me-1">
+                  <%= p.active_keys %> Keys
+                </span>
+                <a href="/admin/keys?product_id=<%= p.id %>" class="btn btn-sm btn-outline-gaming p-1 px-2" title="Manage Key Pool">
+                  <i class="bi bi-key-fill"></i>
+                </a>
+              </td>
+              <td>
+                <% if (p.featured) { %>
+                  <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i> YES</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">No</span>
+                <% } %>
+              </td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <a href="/admin/products/edit/<%= p.id %>" class="btn btn-sm btn-outline-gaming"><i class="bi bi-pencil"></i> Edit</a>
+                  <form action="/admin/products/delete/<%= p.id %>" method="POST" onsubmit="return confirm('Delete product <%= p.name %>?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

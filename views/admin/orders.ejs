@@ -1,0 +1,75 @@
+<%- include('../layouts/header', { pageTitle: 'Admin - Orders' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container-fluid px-lg-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-receipt me-2 text-cyan"></i> Customer Orders Management</h2>
+      <p class="text-secondary small mb-0">Track customer purchases, fulfillment status, and assigned digital key vouchers</p>
+    </div>
+  </div>
+
+  <% if (success) { %>
+    <div class="alert alert-success border-success small mb-4">
+      <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
+    </div>
+  <% } %>
+
+  <div class="card card-gaming p-4">
+    <div class="table-responsive">
+      <table class="table table-dark table-dark-custom align-middle mb-0">
+        <thead>
+          <tr class="text-muted small">
+            <th>Order Ref</th>
+            <th>Customer Email</th>
+            <th>Purchased Items & Keys</th>
+            <th>Total Amount</th>
+            <th>Payment Method</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (orders.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">No customer orders placed yet.</td>
+            </tr>
+          <% } else { %>
+            <% orders.forEach(o => { %>
+              <tr>
+                <td><strong class="text-cyan"><%= o.order_number %></strong></td>
+                <td><%= o.customer_email %></td>
+                <td>
+                  <div class="d-grid gap-1">
+                    <% o.items.forEach(item => { %>
+                      <div class="small">
+                        <strong class="text-white"><%= item.product_name %></strong> (x<%= item.quantity %>) - $<%= item.price.toFixed(2) %>
+                        <% if (item.key_codes) { %>
+                          <div class="font-monospace text-warning small ms-2"><i class="bi bi-key-fill me-1"></i><%= item.key_codes %></div>
+                        <% } %>
+                      </div>
+                    <% }); %>
+                  </div>
+                </td>
+                <td class="fw-bold text-white">$<%= o.total_amount.toFixed(2) %></td>
+                <td><span class="badge bg-secondary"><%= o.payment_method %></span></td>
+                <td class="small text-secondary"><%= new Date(o.created_at).toLocaleString() %></td>
+                <td>
+                  <form action="/admin/orders/status/<%= o.id %>" method="POST" class="d-flex align-items-center gap-1">
+                    <select name="status" class="form-select form-select-dark form-select-sm" onchange="this.form.submit()">
+                      <option value="completed" <%= o.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                      <option value="pending" <%= o.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                      <option value="refunded" <%= o.status === 'refunded' ? 'selected' : '' %>>Refunded</option>
+                    </select>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

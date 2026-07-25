@@ -1,0 +1,68 @@
+<%- include('../layouts/header', { pageTitle: 'Order Confirmation' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card card-gaming p-4 p-md-5 text-center mb-4">
+        <div class="stat-icon bg-success bg-opacity-25 text-success mx-auto mb-3" style="width: 72px; height: 72px; font-size: 2.2rem;">
+          <i class="bi bi-check-lg"></i>
+        </div>
+        <h2 class="fw-bold text-white mb-2">Payment Confirmed!</h2>
+        <p class="text-secondary mb-4">
+          Thank you for your order! Your digital codes have been generated and unlocked below.
+        </p>
+
+        <div class="d-inline-flex gap-3 px-4 py-2 bg-dark rounded-pill border border-secondary mb-4">
+          <span class="text-secondary">Order Reference: <strong class="text-cyan"><%= order.order_number %></strong></span>
+          <span class="text-secondary">|</span>
+          <span class="text-secondary">Payment Method: <strong class="text-white"><%= order.payment_method %></strong></span>
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <!-- Purchased Digital Keys List -->
+        <h4 class="fw-bold text-white text-start mb-4"><i class="bi bi-key-fill text-warning me-2"></i> Unlocked License Keys</h4>
+
+        <% orderItems.forEach(item => { %>
+          <div class="card card-gaming p-4 mb-3 text-start bg-dark">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold text-white mb-1"><%= item.product_name %></h5>
+                <span class="small text-secondary">Quantity: <%= item.quantity %> &bull; Price: $<%= item.price.toFixed(2) %></span>
+              </div>
+              <span class="badge bg-success bg-opacity-25 text-success border border-success">Delivered</span>
+            </div>
+
+            <label class="form-label text-cyan small fw-bold mb-2"><i class="bi bi-terminal-fill me-1"></i> Digital Redeem Code(s):</label>
+            <div class="d-grid gap-2">
+              <% if (item.keysList && item.keysList.length > 0) { %>
+                <% item.keysList.forEach(k => { %>
+                  <div class="key-box d-flex justify-content-between align-items-center">
+                    <span><%= k %></span>
+                    <button class="btn btn-sm btn-outline-gaming text-cyan" onclick="navigator.clipboard.writeText('<%= k %>'); showToast('Key copied to clipboard!');">
+                      <i class="bi bi-copy"></i> Copy
+                    </button>
+                  </div>
+                <% }); %>
+              <% } else { %>
+                <div class="key-box text-muted">Processing Key Allocation...</div>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-4 pt-3">
+          <a href="/user/inventory" class="btn btn-gaming">
+            <i class="bi bi-vault me-1"></i> View Key Inventory Vault
+          </a>
+          <a href="/catalog" class="btn btn-outline-gaming">
+            <i class="bi bi-bag me-1"></i> Continue Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

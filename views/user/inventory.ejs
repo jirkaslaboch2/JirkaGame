@@ -1,0 +1,70 @@
+<%- include('../layouts/header', { pageTitle: 'My Keys Vault' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-vault me-2 text-warning"></i> My Digital Keys Vault</h2>
+      <p class="text-secondary small mb-0">Welcome back, <strong><%= user.username %></strong> (<%= user.email %>). Access your unlocked redeem codes below.</p>
+    </div>
+    <a href="/catalog" class="btn btn-gaming"><i class="bi bi-bag-plus me-1"></i> Buy More Items</a>
+  </div>
+
+  <% if (orders.length === 0) { %>
+    <div class="card card-gaming p-5 text-center my-4">
+      <i class="bi bi-key text-muted" style="font-size: 3.5rem;"></i>
+      <h4 class="mt-3 text-white">Your Key Vault is Empty</h4>
+      <p class="text-secondary">Purchased digital keys and gift card vouchers will appear here automatically.</p>
+      <div>
+        <a href="/catalog" class="btn btn-gaming">Explore Storefront</a>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="row g-4">
+      <% orders.forEach(order => { %>
+        <div class="col-12">
+          <div class="card card-gaming p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-3 border-bottom border-secondary gap-2">
+              <div>
+                <span class="fs-5 fw-bold text-white me-2">Order #<%= order.order_number %></span>
+                <span class="badge bg-secondary text-light font-monospace"><%= new Date(order.created_at).toLocaleDateString() %></span>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <span class="fs-5 fw-bold text-cyan">$<%= order.total_amount.toFixed(2) %></span>
+                <span class="badge bg-success bg-opacity-25 text-success border border-success"><%= order.status.toUpperCase() %></span>
+              </div>
+            </div>
+
+            <div class="d-grid gap-3">
+              <% order.items.forEach(item => { %>
+                <div class="card card-gaming p-3 bg-dark">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold text-white mb-0"><%= item.product_name %> (x<%= item.quantity %>)</h6>
+                    <span class="text-secondary small">$<%= item.price.toFixed(2) %> each</span>
+                  </div>
+
+                  <div class="d-grid gap-2 mt-2">
+                    <% if (item.keysList && item.keysList.length > 0) { %>
+                      <% item.keysList.forEach(k => { %>
+                        <div class="key-box d-flex justify-content-between align-items-center py-2 px-3">
+                          <span><%= k %></span>
+                          <button class="btn btn-sm btn-outline-gaming text-cyan" onclick="navigator.clipboard.writeText('<%= k %>'); showToast('Key copied!');">
+                            <i class="bi bi-copy"></i> Copy Key
+                          </button>
+                        </div>
+                      <% }); %>
+                    <% } else { %>
+                      <div class="key-box text-muted">No key assigned yet</div>
+                    <% } %>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../layouts/footer') %>

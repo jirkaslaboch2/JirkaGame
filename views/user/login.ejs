@@ -1,0 +1,58 @@
+<%- include('../layouts/header', { pageTitle: 'Login' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card card-gaming p-4 p-md-5">
+        <div class="text-center mb-4">
+          <i class="bi bi-controller text-cyan" style="font-size: 3rem;"></i>
+          <h3 class="fw-bold text-white mt-2">Gamer Login</h3>
+          <p class="text-secondary small">Access your purchased digital key vault & order history</p>
+        </div>
+
+        <% if (error) { %>
+          <div class="alert alert-danger border-danger small text-center mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> <%= error %>
+          </div>
+        <% } %>
+
+        <% if (success) { %>
+          <div class="alert alert-success border-success small text-center mb-4">
+            <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
+          </div>
+        <% } %>
+
+        <form action="/auth/login" method="POST">
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Email Address</label>
+            <input type="email" name="email" class="form-control form-control-dark" placeholder="admin@example.com" required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-bold">Password</label>
+            <input type="password" name="password" class="form-control form-control-dark" placeholder="••••••••" required>
+          </div>
+
+          <div class="d-grid mb-4">
+            <button type="submit" class="btn btn-gaming btn-lg">Sign In</button>
+          </div>
+        </form>
+
+        <div class="card card-gaming p-3 bg-dark mb-3 border-info border-opacity-50">
+          <div class="fw-bold text-cyan small mb-1"><i class="bi bi-info-circle me-1"></i> Demo Credentials:</div>
+          <div class="small text-secondary">
+            <strong>Admin Account:</strong> <code>admin@example.com</code> / <code>admin123</code><br>
+            <strong>Customer Account:</strong> <code>user@example.com</code> / <code>user123</code>
+          </div>
+        </div>
+
+        <div class="text-center text-secondary small">
+          Don't have an account? <a href="/auth/register" class="text-cyan text-decoration-none fw-bold">Register Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

@@ -1,0 +1,131 @@
+<%- include('../layouts/header', { pageTitle: 'Home' }) %>
+<%- include('../layouts/navbar') %>
+
+<!-- Hero Banner -->
+<section class="hero-banner text-center text-lg-start">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="badge bg-primary bg-opacity-25 text-cyan border border-info mb-3 px-3 py-2 rounded-pill font-monospace">
+          <i class="bi bi-bolt-fill me-1"></i> INSTANT 24/7 DIGITAL DELIVERY
+        </span>
+        <h1 class="hero-title mb-3">
+          Level Up Your Game with <span class="gradient-text">Epic Digital Loot</span>
+        </h1>
+        <p class="lead text-secondary mb-4">
+          Buy weapon skins, in-game currency vouchers, Robux, WoW Gold, and game time codes instantly. Verified keys, guaranteed safe delivery, and 100% money-back protection.
+        </p>
+        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+          <a href="/catalog" class="btn btn-gaming btn-lg px-4 fs-6">
+            <i class="bi bi-bag-check-fill me-2"></i> Shop Storefront
+          </a>
+          <a href="#featured" class="btn btn-outline-gaming btn-lg px-4 fs-6">
+            <i class="bi bi-star-fill me-2 text-warning"></i> Featured Loot
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5 text-center">
+        <div class="position-relative d-inline-block">
+          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80" 
+               alt="CS2 Dragon Lore" 
+               class="img-fluid rounded-4 shadow-lg border border-secondary"
+               style="max-height: 340px; object-fit: cover;">
+          <div class="rarity-badge rarity-legendary">Legendary Skin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Category Quick Grid -->
+<section class="py-5 bg-dark">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-1 text-white"><i class="bi bi-controller me-2 text-cyan"></i> Popular Game Franchises</h3>
+        <p class="text-secondary small mb-0">Select your favorite game title to filter available items & voucher codes</p>
+      </div>
+      <a href="/catalog" class="btn btn-sm btn-outline-gaming">View All Games &rarr;</a>
+    </div>
+
+    <div class="row g-3">
+      <% categories.forEach(cat => { %>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/catalog?category=<%= cat.slug %>" class="card card-gaming text-center text-decoration-none p-3 h-100">
+            <div class="stat-icon bg-secondary bg-opacity-25 text-cyan mx-auto mb-2">
+              <i class="bi <%= cat.icon %> fs-3"></i>
+            </div>
+            <h6 class="fw-bold text-white mb-1 fs-6"><%= cat.name %></h6>
+            <span class="small text-secondary"><%= cat.description.split(',')[0] %></span>
+          </a>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section id="featured" class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="text-cyan fw-bold text-uppercase tracking-wider small">Handpicked Rare Drops</span>
+      <h2 class="fw-bold text-white mt-1">Featured Items & License Keys</h2>
+      <p class="text-secondary">Instant delivery code attached to every purchase</p>
+    </div>
+
+    <div class="row g-4">
+      <% featuredProducts.forEach(prod => { %>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card card-gaming h-100">
+            <div class="product-img-wrapper">
+              <img src="<%= prod.image_url %>" alt="<%= prod.name %>">
+              <span class="rarity-badge rarity-<%= prod.rarity.toLowerCase() %>"><%= prod.rarity %></span>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <div class="text-cyan small fw-bold text-uppercase mb-1"><%= prod.category_name %></div>
+              <h6 class="card-title fw-bold text-white text-truncate mb-2" title="<%= prod.name %>">
+                <a href="/product/<%= prod.slug %>" class="text-white text-decoration-none"><%= prod.name %></a>
+              </h6>
+              <p class="card-text small text-secondary flex-grow-1 text-truncate-2">
+                <%= prod.description %>
+              </p>
+              <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top border-secondary">
+                <div>
+                  <span class="fs-5 fw-bold text-white">$<%= prod.price.toFixed(2) %></span>
+                </div>
+                <button class="btn btn-sm btn-gaming" onclick='addToCart(<%- JSON.stringify({ id: prod.id, name: prod.name, price: prod.price, image_url: prod.image_url, rarity: prod.rarity }) %>)'>
+                  <i class="bi bi-cart-plus me-1"></i> Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Badges -->
+<section class="py-5 bg-card border-top border-bottom border-secondary">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <i class="bi bi-shield-check text-cyan fs-1 mb-2"></i>
+        <h5 class="fw-bold text-white">Stripe 256-Bit Protection</h5>
+        <p class="small text-secondary mb-0">All transactions are encrypted via official Stripe payment gateways with full fraud shielding.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="bi bi-lightning-charge-fill text-warning fs-1 mb-2"></i>
+        <h5 class="fw-bold text-white">Instant Automated Keys</h5>
+        <p class="small text-secondary mb-0">Your digital key code is revealed on screen immediately after checkout and stored in your account vault.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="bi bi-headset text-success fs-1 mb-2"></i>
+        <h5 class="fw-bold text-white">24/7 Gamer Support</h5>
+        <p class="small text-secondary mb-0">Need help redeeming your voucher code? Our dedicated gaming support team is standing by.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layouts/footer') %>
