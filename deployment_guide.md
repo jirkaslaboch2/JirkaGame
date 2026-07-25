@@ -89,8 +89,8 @@ Deploying on a Virtual Private Server (DigitalOcean Droplet, AWS EC2, Vultr, or 
 # Update Ubuntu package lists
 sudo apt update && sudo apt upgrade -y
 
-# Install Node.js 20 LTS
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+# Install Node.js 22 LTS
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs git nginx build-essential
 
 # Install PM2 globally
