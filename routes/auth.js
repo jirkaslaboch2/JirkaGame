@@ -101,7 +101,8 @@ router.get('/user/inventory', (req, res) => {
   }
 
   const userId = req.session.user.id;
-  const orders = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+  const userEmail = req.session.user.email ? req.session.user.email.toLowerCase() : '';
+  const orders = db.prepare('SELECT * FROM orders WHERE user_id = ? OR LOWER(customer_email) = ? ORDER BY created_at DESC').all(userId, userEmail);
 
   // Fetch items and digital keys for each order
   for (let order of orders) {

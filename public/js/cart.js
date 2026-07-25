@@ -188,8 +188,8 @@ async function applyCouponCode() {
   }
 }
 
-// Process Checkout (Stripe or Sandbox Simulator)
-async function processCheckout(useSandbox = false) {
+// Process Stripe Checkout
+async function processCheckout() {
   if (cart.length === 0) {
     showToast('Your cart is empty!');
     return;
@@ -197,6 +197,11 @@ async function processCheckout(useSandbox = false) {
 
   const emailInput = document.getElementById('customerEmailInput');
   const customerEmail = emailInput ? emailInput.value.trim() : '';
+  if (!customerEmail) {
+    alert('Please enter your delivery email address.');
+    if (emailInput) emailInput.focus();
+    return;
+  }
 
   const couponCode = appliedCoupon ? appliedCoupon.code : null;
 
@@ -206,51 +211,23 @@ async function processCheckout(useSandbox = false) {
     customerEmail
   };
 
-  const payBtn = document.getElementById(useSandbox ? 'sandboxPayBtn' : 'stripePayBtn');
+  const payBtn = document.getElementById('stripePayBtn');
   if (payBtn) payBtn.disabled = true;
 
   try {
-    if (useSandbox) {
-      // Sandbox payment
-      const res = await fetch('/checkout/sandbox-pay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
+    const res = await fetch('/checkout/create-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
 
-      if (data.success) {
-        clearCart();
-        window.location.href = data.redirectUrl;
-      } else {
-        alert('Sandbox Payment Failed: ' + data.error);
-        if (payBtn) payBtn.disabled = false;
-      }
+    if (data.url) {
+      clearCart();
+      window.location.href = data.url;
     } else {
-      // Stripe Checkout Session
-      const res = await fetch('/checkout/create-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-
-      if (data.stripeConfigured && data.url) {
-        // Clear local cart before Stripe redirect
-        clearCart();
-        window.location.href = data.url;
-      } else {
-        // Stripe keys are sample placeholder keys - open Sandbox confirmation modal
-        const modalEl = document.getElementById('sandboxNoticeModal');
-        if (modalEl) {
-          const modal = new bootstrap.Modal(modalEl);
-          modal.show();
-        } else {
-          alert('Stripe Key is in sample mode. Using Sandbox Payment Simulator instead.');
-          processCheckout(true);
-        }
-        if (payBtn) payBtn.disabled = false;
-      }
+      alert(data.error || data.message || 'Unable to create Stripe Checkout session. Please verify your Stripe API keys in Admin Settings.');
+      if (payBtn) payBtn.disabled = false;
     }
   } catch (err) {
     console.error('Checkout error:', err);

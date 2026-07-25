@@ -51,43 +51,14 @@
 
         <!-- Primary Payment Buttons -->
         <div class="d-grid gap-2 mb-3">
-          <button id="stripePayBtn" class="btn btn-gaming btn-lg" onclick="processCheckout(false)">
+          <button id="stripePayBtn" class="btn btn-gaming btn-lg" onclick="processCheckout()">
             <i class="bi bi-stripe me-2"></i> Pay with Stripe
-          </button>
-          <button id="sandboxPayBtn" class="btn btn-outline-gaming btn-sm" onclick="processCheckout(true)">
-            <i class="bi bi-cpu me-2 text-warning"></i> Sandbox Payment Simulator (Instant Test)
           </button>
         </div>
 
         <div class="text-center text-secondary small">
-          <i class="bi bi-shield-check me-1 text-success"></i> 100% Encrypted Checkout Guarantee
+          <i class="bi bi-shield-check me-1 text-success"></i> 100% Encrypted Stripe Checkout
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Sandbox Simulator Fallback Notice -->
-<div class="modal fade" id="sandboxNoticeModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-card border-secondary">
-      <div class="modal-header border-secondary">
-        <h5 class="modal-title fw-bold text-white"><i class="bi bi-stripe text-info me-2"></i> Stripe API Key Mode</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-content-body p-4 text-secondary">
-        <p class="text-white">
-          Stripe is currently using sample test keys (<code>sk_test_sample...</code>).
-        </p>
-        <p class="small">
-          You can test the <strong>Instant Payment Simulator</strong> right now without setting up a live Stripe account!
-          Once you are ready for production, enter your live/test Stripe API keys in the <strong>Admin Panel &rarr; Settings</strong>.
-        </p>
-      </div>
-      <div class="modal-footer border-secondary">
-        <button type="button" class="btn btn-gaming w-100" onclick="bootstrap.Modal.getInstance(document.getElementById('sandboxNoticeModal')).hide(); processCheckout(true);">
-          <i class="bi bi-play-circle-fill me-2"></i> Run Instant Payment Simulator
-        </button>
       </div>
     </div>
   </div>

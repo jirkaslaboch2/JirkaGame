@@ -159,13 +159,9 @@ router.post('/create-session', async (req, res) => {
     }
 
     if (!stripe) {
-      // If Stripe keys are not configured yet, notify client to use Sandbox payment or fallback smoothly
-      return res.json({
+      return res.status(400).json({
         stripeConfigured: false,
-        orderNumber,
-        orderId,
-        total: finalTotal,
-        message: 'Stripe API keys not set in settings or .env. Use Sandbox Simulator to test instantly!'
+        error: 'Stripe API keys are not configured. Please set your Stripe publishable and secret keys in Admin Panel -> Settings.'
       });
     }
 
@@ -194,58 +190,6 @@ router.post('/create-session', async (req, res) => {
   } catch (err) {
     console.error('Stripe Checkout Error:', err);
     res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /checkout/sandbox-pay - Direct zero-config sandbox simulator for instant testing
-router.post('/sandbox-pay', (req, res) => {
-  try {
-    const { items, couponCode, customerEmail } = req.body;
-    if (!items || items.length === 0) {
-      return res.status(400).json({ success: false, error: 'Cart is empty' });
-    }
-
-    const email = customerEmail || (req.session.user ? req.session.user.email : 'gamer@example.com');
-    const orderNumber = 'SANDBOX-' + Math.floor(100000 + Math.random() * 900000);
-    const userId = req.session.user ? req.session.user.id : null;
-
-    let subtotal = 0;
-    for (let item of items) {
-      const prod = db.prepare('SELECT price FROM products WHERE id = ?').get(item.id);
-      if (prod) subtotal += prod.price * item.quantity;
-    }
-
-    let discountAmount = 0;
-    if (couponCode) {
-      const coupon = db.prepare('SELECT * FROM coupons WHERE code = ? AND active = 1').get(couponCode.toUpperCase());
-      if (coupon && coupon.times_used < coupon.max_uses) {
-        if (coupon.discount_percent > 0) discountAmount = (subtotal * coupon.discount_percent) / 100;
-        else if (coupon.discount_fixed > 0) discountAmount = Math.min(coupon.discount_fixed, subtotal);
-        db.prepare('UPDATE coupons SET times_used = times_used + 1 WHERE id = ?').run(coupon.id);
-      }
-    }
-
-    const totalAmount = Math.max(0, subtotal - discountAmount);
-
-    const result = db.prepare(`
-      INSERT INTO orders (order_number, user_id, customer_email, total_amount, discount_amount, status, payment_method)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(orderNumber, userId, email, totalAmount, discountAmount, 'completed', 'Sandbox Simulator');
-
-    const orderId = result.lastInsertRowid;
-
-    // Instantly fulfill digital keys and deduct inventory
-    fulfillOrder(orderId, items, email, userId);
-
-    res.json({
-      success: true,
-      orderId,
-      orderNumber,
-      redirectUrl: `/checkout/success?order_id=${orderId}&sandbox=true`
-    });
-  } catch (err) {
-    console.error('Sandbox Pay Error:', err);
-    res.status(500).json({ success: false, error: err.message });
   }
 });
 
