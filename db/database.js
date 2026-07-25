@@ -115,20 +115,16 @@ function initDatabase() {
   // Seed Admin User
   const adminCount = db.prepare('SELECT COUNT(*) as count FROM users WHERE role = ?').get('admin');
   if (adminCount.count === 0) {
-    const hashedPassword = bcrypt.hashSync('admin123', 10);
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@example.com').trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminUsername = process.env.ADMIN_USERNAME || 'AdminGamer';
+    const hashedPassword = bcrypt.hashSync(adminPassword, 10);
+
     db.prepare('INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)').run(
-      'AdminGamer',
-      'admin@example.com',
+      adminUsername,
+      adminEmail,
       hashedPassword,
       'admin'
-    );
-    // Also add a sample regular customer
-    const userPass = bcrypt.hashSync('user123', 10);
-    db.prepare('INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)').run(
-      'PlayerOne',
-      'user@example.com',
-      userPass,
-      'user'
     );
   }
 
