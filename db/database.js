@@ -112,14 +112,20 @@ function initDatabase() {
     insertSetting.run(key, val);
   }
 
-  // Seed Admin User
-  const adminCount = db.prepare('SELECT COUNT(*) as count FROM users WHERE role = ?').get('admin');
-  if (adminCount.count === 0) {
-    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@example.com').trim().toLowerCase();
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-    const adminUsername = process.env.ADMIN_USERNAME || 'AdminGamer';
-    const hashedPassword = bcrypt.hashSync(adminPassword, 10);
+  // Seed / Sync Admin User from Environment Settings
+  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@example.com').trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const adminUsername = process.env.ADMIN_USERNAME || 'AdminGamer';
+  const hashedPassword = bcrypt.hashSync(adminPassword, 10);
 
+  const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(adminEmail);
+  if (existingAdmin) {
+    db.prepare("UPDATE users SET password = ?, role = 'admin', username = ? WHERE id = ?").run(
+      hashedPassword,
+      adminUsername,
+      existingAdmin.id
+    );
+  } else {
     db.prepare('INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)').run(
       adminUsername,
       adminEmail,

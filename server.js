@@ -123,7 +123,7 @@ app.listen(PORT, () => {
   🔥 LootVault Gaming Store is running live!
   🌐 Storefront URL : http://localhost:${PORT}
   🔐 Admin Dashboard: http://localhost:${PORT}/admin
-  👑 Admin Login    : admin@example.com / admin123
+  👑 Admin Email    : ${process.env.ADMIN_EMAIL || 'admin@example.com'}
   🛡️ Production Mode: ${IS_PROD ? 'ENABLED (HTTPS/Proxy)' : 'Development (Local)'}
   🎮 =================================================== 🎮
   `);
