@@ -1,13 +1,13 @@
 # Production Dockerfile for LootVault Gaming Shop
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Copy package manifests
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install production dependencies
+RUN npm install --omit=dev
 
 # Copy application source code
 COPY . .

@@ -16,7 +16,6 @@
     "better-sqlite3": "^13.0.1",
     "better-sqlite3-session-store": "^0.1.0",
     "compression": "^1.8.1",
-    "connect-sqlite3": "^0.9.17",
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
