@@ -4,10 +4,10 @@
       <div class="col-lg-4">
         <a class="navbar-brand d-flex align-items-center gap-2 mb-3" href="/">
           <i class="bi bi-controller text-cyan" style="font-size: 1.8rem;"></i>
-          <span class="fs-4 font-weight-bold text-white">LOOT<span class="text-cyan">VAULT</span></span>
+          <span class="fs-4 font-weight-bold text-white"><%= settings && settings.site_name ? settings.site_name : 'LootVault Gaming Store' %></span>
         </a>
         <p class="small text-secondary mb-3">
-          The premier automated digital store for online gaming items, in-game currency vouchers, rare weapon skins, and instant license key codes. Instant delivery 24/7.
+          The premier automated digital store for online gaming items, in-game currency vouchers, rare weapon skins, and instant license key codes. Contact: <%= settings && settings.contact_email ? settings.contact_email : 'support@lootvault.gg' %>
         </p>
         <div class="d-flex gap-3 text-secondary fs-5">
           <i class="bi bi-discord me-2"></i>
@@ -28,10 +28,13 @@
       <div class="col-6 col-lg-2">
         <h6 class="text-white fw-bold mb-3">Top Game Categories</h6>
         <ul class="list-unstyled small d-grid gap-2">
-          <li><a href="/catalog?category=cs2" class="text-secondary text-decoration-none">Counter-Strike 2</a></li>
-          <li><a href="/catalog?category=wow" class="text-secondary text-decoration-none">World of Warcraft</a></li>
-          <li><a href="/catalog?category=roblox" class="text-secondary text-decoration-none">Roblox Robux</a></li>
-          <li><a href="/catalog?category=gta5" class="text-secondary text-decoration-none">GTA V Online Cash</a></li>
+          <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+            <% categories.slice(0, 4).forEach(c => { %>
+              <li><a href="/catalog?category=<%= c.slug %>" class="text-secondary text-decoration-none"><%= c.name %></a></li>
+            <% }); %>
+          <% } else { %>
+            <li><a href="/catalog" class="text-secondary text-decoration-none">Browse All</a></li>
+          <% } %>
         </ul>
       </div>
       <div class="col-lg-4">
@@ -49,7 +52,7 @@
     </div>
     <hr class="my-4 border-secondary opacity-50">
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center small text-secondary">
-      <div>&copy; <%= new Date().getFullYear() %> LootVault Gaming Store. All rights reserved.</div>
+      <div>&copy; <%= new Date().getFullYear() %> <%= settings && settings.site_name ? settings.site_name : 'LootVault Gaming Store' %>. All rights reserved.</div>
       <div class="mt-2 mt-sm-0">
         <a href="/admin" class="text-secondary text-decoration-none me-3"><i class="bi bi-lock me-1"></i> Admin Portal</a>
         <a href="/deployment_guide.md" target="_blank" class="text-cyan text-decoration-none"><i class="bi bi-book me-1"></i> Deployment Guide</a>

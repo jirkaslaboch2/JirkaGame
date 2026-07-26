@@ -10,6 +10,18 @@
     <a href="/admin/products/new" class="btn btn-gaming"><i class="bi bi-plus-lg me-1"></i> Add New Product</a>
   </div>
 
+  <!-- Admin Subnav -->
+  <div class="nav nav-pills gap-2 mb-4 bg-card p-2 rounded-3 border border-secondary">
+    <a href="/admin" class="nav-link text-white"><i class="bi bi-bar-chart-fill me-1"></i> Overview</a>
+    <a href="/admin/products" class="nav-link active"><i class="bi bi-box-seam me-1"></i> Products</a>
+    <a href="/admin/categories" class="nav-link text-white"><i class="bi bi-tags me-1"></i> Categories</a>
+    <a href="/admin/keys" class="nav-link text-white"><i class="bi bi-key me-1"></i> Key Pools</a>
+    <a href="/admin/orders" class="nav-link text-white"><i class="bi bi-receipt me-1"></i> Orders</a>
+    <a href="/admin/coupons" class="nav-link text-white"><i class="bi bi-ticket-perforated me-1"></i> Coupons</a>
+    <a href="/admin/users" class="nav-link text-white"><i class="bi bi-people me-1"></i> Users</a>
+    <a href="/admin/settings" class="nav-link text-white"><i class="bi bi-gear me-1"></i> Store Settings</a>
+  </div>
+
   <% if (success) { %>
     <div class="alert alert-success border-success small mb-4">
       <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
@@ -46,7 +58,7 @@
               <td>
                 <span class="rarity-badge rarity-<%= p.rarity.toLowerCase() %>" style="position: static;"><%= p.rarity %></span>
               </td>
-              <td class="fw-bold text-cyan">$<%= p.price.toFixed(2) %></td>
+              <td class="fw-bold text-cyan"><%= settings && settings.currency_symbol ? settings.currency_symbol : '$' %><%= p.price.toFixed(2) %></td>
               <td>
                 <span class="badge bg-<%= p.active_keys > 0 ? 'success' : 'danger' %> me-1">
                   <%= p.active_keys %> Keys

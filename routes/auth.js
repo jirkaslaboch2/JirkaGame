@@ -13,7 +13,7 @@ router.get('/login', (req, res) => {
 
 // POST /auth/login
 router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, remember } = req.body;
   
   if (!email || !password) {
     return res.render('user/login', { error: 'Please enter both email and password.', success: null });
@@ -31,6 +31,12 @@ router.post('/login', (req, res) => {
     email: user.email,
     role: user.role
   };
+
+  if (remember) {
+    req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+  } else {
+    req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 1 day
+  }
 
   if (user.role === 'admin') {
     return res.redirect('/admin');

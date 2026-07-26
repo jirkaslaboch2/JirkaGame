@@ -24,6 +24,7 @@
     <a href="/admin/keys" class="nav-link text-white"><i class="bi bi-key me-1"></i> Key Pools</a>
     <a href="/admin/orders" class="nav-link text-white"><i class="bi bi-receipt me-1"></i> Orders</a>
     <a href="/admin/coupons" class="nav-link text-white"><i class="bi bi-ticket-perforated me-1"></i> Coupons</a>
+    <a href="/admin/users" class="nav-link text-white"><i class="bi bi-people me-1"></i> Users</a>
     <a href="/admin/settings" class="nav-link text-white"><i class="bi bi-gear me-1"></i> Store Settings</a>
   </div>
 
@@ -33,7 +34,7 @@
       <div class="stat-widget d-flex align-items-center justify-content-between">
         <div>
           <span class="text-secondary small fw-bold text-uppercase">Total Revenue</span>
-          <h3 class="fw-bold text-cyan mt-1 mb-0">$<%= totalRevenue.toFixed(2) %></h3>
+          <h3 class="fw-bold text-cyan mt-1 mb-0"><%= settings && settings.currency_symbol ? settings.currency_symbol : '$' %><%= totalRevenue.toFixed(2) %></h3>
         </div>
         <div class="stat-icon bg-info bg-opacity-25 text-info">
           <i class="bi bi-currency-dollar"></i>
@@ -108,7 +109,7 @@
               <% lowStockProducts.forEach(p => { %>
                 <tr>
                   <td class="fw-bold text-white"><%= p.name %></td>
-                  <td>$<%= p.price.toFixed(2) %></td>
+                  <td><%= settings && settings.currency_symbol ? settings.currency_symbol : '$' %><%= p.price.toFixed(2) %></td>
                   <td><strong class="<%= p.key_count < 5 ? 'text-danger' : 'text-warning' %>"><%= p.key_count %></strong></td>
                   <td>
                     <% if (p.key_count === 0) { %>
@@ -152,7 +153,7 @@
                 <tr>
                   <td><strong class="text-cyan"><%= o.order_number %></strong></td>
                   <td><%= o.customer_email %></td>
-                  <td class="fw-bold">$<%= o.total_amount.toFixed(2) %></td>
+                  <td class="fw-bold"><%= settings && settings.currency_symbol ? settings.currency_symbol : '$' %><%= o.total_amount.toFixed(2) %></td>
                   <td><%= o.payment_method %></td>
                   <td class="small text-secondary"><%= new Date(o.created_at).toLocaleString() %></td>
                   <td>

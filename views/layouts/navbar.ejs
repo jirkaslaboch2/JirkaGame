@@ -8,7 +8,7 @@
   <div class="container-fluid px-lg-4">
     <a class="navbar-brand d-flex align-items-center gap-2" href="/">
       <i class="bi bi-controller text-cyan" style="font-size: 1.6rem;"></i>
-      <span>LOOT<span class="text-white">VAULT</span></span>
+      <span class="fw-bold text-white"><%= settings && settings.site_name ? settings.site_name : 'LOOTVAULT' %></span>
     </a>
 
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -28,12 +28,13 @@
             <i class="bi bi-controller me-1"></i> Games
           </a>
           <ul class="dropdown-menu dropdown-menu-dark bg-card border-secondary">
-            <li><a class="dropdown-item" href="/catalog?category=cs2"><i class="bi bi-crosshair me-2 text-warning"></i> CS2 Skins & Keys</a></li>
-            <li><a class="dropdown-item" href="/catalog?category=wow"><i class="bi bi-shield-shaded me-2 text-info"></i> World of Warcraft</a></li>
-            <li><a class="dropdown-item" href="/catalog?category=roblox"><i class="bi bi-box-seam me-2 text-danger"></i> Roblox Robux</a></li>
-            <li><a class="dropdown-item" href="/catalog?category=lol"><i class="bi bi-trophy me-2 text-primary"></i> League of Legends</a></li>
-            <li><a class="dropdown-item" href="/catalog?category=gta5"><i class="bi bi-car-front me-2 text-success"></i> GTA V Online</a></li>
-            <li><a class="dropdown-item" href="/catalog?category=valorant"><i class="bi bi-lightning-charge me-2 text-danger"></i> Valorant VP</a></li>
+            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+              <% categories.forEach(c => { %>
+                <li><a class="dropdown-item" href="/catalog?category=<%= c.slug %>"><i class="bi <%= c.icon || 'bi-controller' %> me-2 text-cyan"></i> <%= c.name %></a></li>
+              <% }); %>
+            <% } else { %>
+              <li><a class="dropdown-item" href="/catalog"><i class="bi bi-controller me-2"></i> All Games</a></li>
+            <% } %>
           </ul>
         </li>
       </ul>

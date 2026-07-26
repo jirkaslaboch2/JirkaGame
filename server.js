@@ -89,14 +89,29 @@ app.use(express.urlencoded({ extended: true }));
 const checkoutRoutes = require('./routes/checkout');
 app.use('/checkout', checkoutRoutes);
 
-// Pass store settings & user state globally to all EJS templates
+// Pass store settings, categories & user state globally to all EJS templates
 app.use((req, res, next) => {
   const settingsRows = db.prepare('SELECT * FROM settings').all();
   const settings = {};
   settingsRows.forEach(s => settings[s.key] = s.value);
   
+  const categories = db.prepare('SELECT * FROM categories ORDER BY name ASC').all();
+
+  if (req.session && req.session.user && req.session.user.id) {
+    const freshUser = db.prepare('SELECT id, username, email, role, created_at FROM users WHERE id = ?').get(req.session.user.id);
+    if (freshUser) {
+      req.session.user = freshUser;
+      res.locals.user = freshUser;
+    } else {
+      req.session.user = null;
+      res.locals.user = null;
+    }
+  } else {
+    res.locals.user = null;
+  }
+
   res.locals.settings = settings;
-  res.locals.user = req.session.user || null;
+  res.locals.categories = categories;
   next();
 });
 

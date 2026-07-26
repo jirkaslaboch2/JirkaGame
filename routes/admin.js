@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
+const bcrypt = require('bcryptjs');
 
 // Middleware to ensure user is logged in as Admin
 function requireAdmin(req, res, next) {
@@ -373,7 +374,90 @@ router.post('/settings', (req, res) => {
     updateStmt.run(key, val);
   }
 
-  res.redirect('/admin/settings?success=Settings+updated+successfully');
+// GET /admin/users - User Account Management
+router.get('/users', (req, res) => {
+  const users = db.prepare(`
+    SELECT u.*, 
+    (SELECT COUNT(*) FROM orders WHERE user_id = u.id) as order_count 
+    FROM users u 
+    ORDER BY u.id DESC
+  `).all();
+
+  res.render('admin/users', {
+    user: req.session.user,
+    users,
+    success: req.query.success || null,
+    error: req.query.error || null
+  });
+});
+
+// GET /admin/users/edit/:id - Edit User Form
+router.get('/users/edit/:id', (req, res) => {
+  const editUser = db.prepare('SELECT id, username, email, role FROM users WHERE id = ?').get(req.params.id);
+  if (!editUser) {
+    return res.redirect('/admin/users?error=User+not+found');
+  }
+
+  res.render('admin/user-form', {
+    user: req.session.user,
+    editUser,
+    error: null
+  });
+});
+
+// POST /admin/users/edit/:id - Update User Details / Password / Role
+router.post('/users/edit/:id', (req, res) => {
+  const { username, email, role, new_password } = req.body;
+  const userId = req.params.id;
+
+  if (!username || !email) {
+    const editUser = db.prepare('SELECT id, username, email, role FROM users WHERE id = ?').get(userId);
+    return res.render('admin/user-form', {
+      user: req.session.user,
+      editUser: { id: userId, username, email, role },
+      error: 'Username and email are required.'
+    });
+  }
+
+  try {
+    if (new_password && new_password.trim()) {
+      const hashedPassword = bcrypt.hashSync(new_password.trim(), 10);
+      db.prepare('UPDATE users SET username = ?, email = ?, role = ?, password = ? WHERE id = ?').run(
+        username.trim(),
+        email.trim().toLowerCase(),
+        role || 'user',
+        hashedPassword,
+        userId
+      );
+    } else {
+      db.prepare('UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?').run(
+        username.trim(),
+        email.trim().toLowerCase(),
+        role || 'user',
+        userId
+      );
+    }
+
+    res.redirect('/admin/users?success=User+updated+successfully');
+  } catch (err) {
+    const editUser = db.prepare('SELECT id, username, email, role FROM users WHERE id = ?').get(userId);
+    res.render('admin/user-form', {
+      user: req.session.user,
+      editUser: { id: userId, username, email, role },
+      error: 'Email is already taken by another user.'
+    });
+  }
+});
+
+// POST /admin/users/delete/:id - Delete User Account
+router.post('/users/delete/:id', (req, res) => {
+  const targetId = parseInt(req.params.id);
+  if (req.session.user && req.session.user.id === targetId) {
+    return res.redirect('/admin/users?error=Cannot+delete+your+own+admin+account');
+  }
+
+  db.prepare('DELETE FROM users WHERE id = ?').run(targetId);
+  res.redirect('/admin/users?success=User+deleted+successfully');
 });
 
 module.exports = router;

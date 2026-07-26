@@ -91,7 +91,7 @@
               </p>
               <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top border-secondary">
                 <div>
-                  <span class="fs-5 fw-bold text-white">$<%= prod.price.toFixed(2) %></span>
+                  <span class="fs-5 fw-bold text-white"><%= settings && settings.currency_symbol ? settings.currency_symbol : '$' %><%= prod.price.toFixed(2) %></span>
                 </div>
                 <button class="btn btn-sm btn-gaming" onclick='addToCart(<%- JSON.stringify({ id: prod.id, name: prod.name, price: prod.price, image_url: prod.image_url, rarity: prod.rarity }) %>)'>
                   <i class="bi bi-cart-plus me-1"></i> Add

@@ -29,7 +29,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
               <div>
                 <h5 class="fw-bold text-white mb-1"><%= item.product_name %></h5>
-                <span class="small text-secondary">Quantity: <%= item.quantity %> &bull; Price: $<%= item.price.toFixed(2) %></span>
+                <span class="small text-secondary">Quantity: <%= item.quantity %> &bull; Price: <%= settings && settings.currency_symbol ? settings.currency_symbol : '$' %><%= item.price.toFixed(2) %></span>
               </div>
               <span class="badge bg-success bg-opacity-25 text-success border border-success">Delivered</span>
             </div>

@@ -1,0 +1,89 @@
+<%- include('../layouts/header', { pageTitle: 'Admin - User Management' }) %>
+<%- include('../layouts/navbar') %>
+
+<div class="container-fluid px-lg-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <h2 class="fw-bold text-white mb-1"><i class="bi bi-people-fill me-2 text-cyan"></i> Registered User Accounts</h2>
+      <p class="text-secondary small mb-0">View registered user profiles, edit roles/credentials, or delete accounts</p>
+    </div>
+  </div>
+
+  <!-- Admin Subnav -->
+  <div class="nav nav-pills gap-2 mb-4 bg-card p-2 rounded-3 border border-secondary">
+    <a href="/admin" class="nav-link text-white"><i class="bi bi-bar-chart-fill me-1"></i> Overview</a>
+    <a href="/admin/products" class="nav-link text-white"><i class="bi bi-box-seam me-1"></i> Products</a>
+    <a href="/admin/categories" class="nav-link text-white"><i class="bi bi-tags me-1"></i> Categories</a>
+    <a href="/admin/keys" class="nav-link text-white"><i class="bi bi-key me-1"></i> Key Pools</a>
+    <a href="/admin/orders" class="nav-link text-white"><i class="bi bi-receipt me-1"></i> Orders</a>
+    <a href="/admin/coupons" class="nav-link text-white"><i class="bi bi-ticket-perforated me-1"></i> Coupons</a>
+    <a href="/admin/users" class="nav-link active"><i class="bi bi-people me-1"></i> Users</a>
+    <a href="/admin/settings" class="nav-link text-white"><i class="bi bi-gear me-1"></i> Store Settings</a>
+  </div>
+
+  <% if (success) { %>
+    <div class="alert alert-success border-success small mb-4">
+      <i class="bi bi-check-circle-fill me-1"></i> <%= success %>
+    </div>
+  <% } %>
+
+  <% if (error) { %>
+    <div class="alert alert-danger border-danger small mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i> <%= error %>
+    </div>
+  <% } %>
+
+  <div class="card card-gaming p-4">
+    <div class="table-responsive">
+      <table class="table table-dark table-dark-custom mb-0 align-middle">
+        <thead>
+          <tr class="text-muted small">
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Orders</th>
+            <th>Joined Date</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr>
+              <td class="text-secondary small">#<%= u.id %></td>
+              <td><strong class="text-white"><%= u.username %></strong></td>
+              <td><%= u.email %></td>
+              <td>
+                <span class="badge <%= u.role === 'admin' ? 'bg-danger' : 'bg-info text-dark' %>">
+                  <%= u.role.toUpperCase() %>
+                </span>
+              </td>
+              <td><span class="badge bg-secondary"><%= u.order_count %> Orders</span></td>
+              <td class="small text-secondary"><%= new Date(u.created_at).toLocaleDateString() %></td>
+              <td class="text-end">
+                <div class="d-flex justify-content-end gap-2">
+                  <a href="/admin/users/edit/<%= u.id %>" class="btn btn-sm btn-outline-gaming">
+                    <i class="bi bi-pencil-square"></i> Edit
+                  </a>
+                  <% if (!user || user.id !== u.id) { %>
+                    <form action="/admin/users/delete/<%= u.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete
+                      </button>
+                    </form>
+                  <% } else { %>
+                    <button class="btn btn-sm btn-outline-secondary" disabled title="You cannot delete yourself">
+                      <i class="bi bi-lock-fill"></i> Self
+                    </button>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

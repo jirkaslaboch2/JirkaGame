@@ -110,7 +110,7 @@ function renderCartPage() {
             <div>
               <h6 class="mb-1 font-weight-bold">${item.name}</h6>
               <div class="badge rarity-${(item.rarity || 'rare').toLowerCase()} mb-1">${item.rarity || 'Item'}</div>
-              <div class="text-muted small">$${item.price.toFixed(2)} each</div>
+              <div class="text-muted small">${window.currencySymbol || '$'}${item.price.toFixed(2)} each</div>
             </div>
           </div>
           <div class="d-flex align-items-center gap-3">
@@ -120,7 +120,7 @@ function renderCartPage() {
               <button class="btn btn-outline-gaming" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
             </div>
             <div class="text-end fw-bold text-cyan" style="min-width: 80px;">
-              $${itemTotal.toFixed(2)}
+              ${window.currencySymbol || '$'}${itemTotal.toFixed(2)}
             </div>
             <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${item.id})">
               <i class="bi bi-trash"></i>
@@ -151,10 +151,11 @@ function updateSummary(subtotal) {
   }
 
   const finalTotal = Math.max(0, subtotal - discountAmount);
+  const sym = window.currencySymbol || '$';
 
-  if (subtotalEl) subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
-  if (discountEl) discountEl.innerText = `-$${discountAmount.toFixed(2)}`;
-  if (totalEl) totalEl.innerText = `$${finalTotal.toFixed(2)}`;
+  if (subtotalEl) subtotalEl.innerText = `${sym}${subtotal.toFixed(2)}`;
+  if (discountEl) discountEl.innerText = `-${sym}${discountAmount.toFixed(2)}`;
+  if (totalEl) totalEl.innerText = `${sym}${finalTotal.toFixed(2)}`;
 }
 
 // Coupon Form Submit Handler
