@@ -374,6 +374,9 @@ router.post('/settings', (req, res) => {
     updateStmt.run(key, val);
   }
 
+  res.redirect('/admin/settings?success=Settings+updated+successfully');
+});
+
 // GET /admin/users - User Account Management
 router.get('/users', (req, res) => {
   const users = db.prepare(`
